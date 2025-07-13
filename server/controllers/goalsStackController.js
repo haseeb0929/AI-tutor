@@ -58,7 +58,7 @@ Return only the JSON array, nothing else.`;
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: "Bearer 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",
+        Authorization: "Bearer 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",
         "Content-Type": "application/json",
         "HTTP-Referer": "https://yourdomain.com",
         "X-Title": "OpenRouter Text Test",
@@ -86,7 +86,6 @@ Return only the JSON array, nothing else.`;
 
     let result = data.choices?.[0]?.message?.content ?? "[]";
 
-    // 🧼 Clean up result in case AI still added backticks
     if (result.startsWith("```")) {
       result = result.replace(/^```json\n?/, "").replace(/```$/, "");
     }

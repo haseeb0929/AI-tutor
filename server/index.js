@@ -11,10 +11,10 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Routes
+
 app.use('/getGoals', goalsRoutes);
 
-// Root route
+
 app.get('/', (req, res) => {
   res.send('✅ AI Tutor Backend is running...');
 });

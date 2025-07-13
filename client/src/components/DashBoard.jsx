@@ -16,12 +16,14 @@ import {
   Code,
   ChevronDown,
   ChevronUp,
+  Check,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 
 export const DashBoard = () => {
   const [dashboardData, setDashboardData] = useState(null)
   const [expandedGoals, setExpandedGoals] = useState(new Set([0])) // First goal expanded by default
+  const [completedGoals, setCompletedGoals] = useState(new Set()) // Track completed goals
 
   useEffect(() => {
     const stored = localStorage.getItem("dashboardData")
@@ -42,6 +44,16 @@ export const DashBoard = () => {
     setExpandedGoals(newExpanded)
   }
 
+  const markGoalComplete = (goalId) => {
+    const newCompleted = new Set(completedGoals)
+    if (newCompleted.has(goalId)) {
+      newCompleted.delete(goalId)
+    } else {
+      newCompleted.add(goalId)
+    }
+    setCompletedGoals(newCompleted)
+  }
+
   if (!dashboardData) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -57,21 +69,18 @@ export const DashBoard = () => {
   const { courseName, studentPerformance, learningPlan } = dashboardData
 
   // Extract learning goals from the new structured format
-const extractGoals = (planArray) => {
-  if (!Array.isArray(planArray)) return []
-
-  return planArray.map((item, index) => ({
-    id: index,
-    topic: item.topic, // updated from clo
-    title: `${item.topic} Learning Goals`, // updated from CLO
-    learningGoals: item.learningGoals || [],
-    resources: item.resources || [],
-    studyTimeline: item.studyTimeline || "1 week",
-    assessmentMethod: item.assessmentMethod || "Complete practice exercises",
-    progress: Math.floor(Math.random() * 40) + 60,
-    status: index === 0 ? "active" : "pending",
-  }))
-}
+  const extractGoals = (planArray) => {
+    if (!Array.isArray(planArray)) return []
+    return planArray.map((item, index) => ({
+      id: index,
+      topic: item.topic,
+      title: `${item.topic} Learning Goals`,
+      learningGoals: item.learningGoals || [],
+      resources: item.resources || [],
+      studyTimeline: item.studyTimeline || "1 week",
+      assessmentMethod: item.assessmentMethod || "Complete practice exercises",
+    }))
+  }
 
   const learningGoals = extractGoals(learningPlan)
 
@@ -152,7 +161,6 @@ const extractGoals = (planArray) => {
                   <p className="text-xs text-muted-foreground">Current performance</p>
                 </CardContent>
               </Card>
-
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total CLOs</CardTitle>
@@ -163,7 +171,6 @@ const extractGoals = (planArray) => {
                   <p className="text-xs text-muted-foreground">Course learning outcomes</p>
                 </CardContent>
               </Card>
-
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Strong Areas</CardTitle>
@@ -174,7 +181,6 @@ const extractGoals = (planArray) => {
                   <p className="text-xs text-muted-foreground">Mastered concepts</p>
                 </CardContent>
               </Card>
-
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Weak Areas</CardTitle>
@@ -205,30 +211,53 @@ const extractGoals = (planArray) => {
               <CardContent>
                 <div className="space-y-6">
                   {learningGoals.map((cloGoal, cloIndex) => (
-                    <div key={cloGoal.id} className="border rounded-lg p-4">
+                    <div
+                      key={cloGoal.id}
+                      className={`border rounded-lg p-4 transition-colors ${
+                        completedGoals.has(cloGoal.id)
+                          ? "bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-800"
+                          : ""
+                      }`}
+                    >
                       {/* CLO Header */}
                       <div
                         className="flex items-center justify-between cursor-pointer"
                         onClick={() => toggleGoalExpansion(cloGoal.id)}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
-                            {cloIndex + 1}
+                          <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
+                              completedGoals.has(cloGoal.id)
+                                ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                                : "bg-primary/10 text-primary"
+                            }`}
+                          >
+                            {completedGoals.has(cloGoal.id) ? <Check className="w-5 h-5" /> : cloIndex + 1}
                           </div>
                           <div>
                             <h4 className="font-semibold text-lg">{cloGoal.topic}</h4>
                             <div className="flex items-center gap-2 mt-1">
-                              <Badge variant={cloGoal.status === "active" ? "default" : "secondary"}>
-                                {cloGoal.status}
-                              </Badge>
                               <Badge variant="outline">{cloGoal.studyTimeline}</Badge>
-                              <span className="text-sm text-muted-foreground">{cloGoal.progress}% mastery</span>
+                              {completedGoals.has(cloGoal.id) && (
+                                <Badge variant="default" className="bg-green-600">
+                                  Completed
+                                </Badge>
+                              )}
                             </div>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Button size="sm" variant={cloGoal.status === "active" ? "default" : "outline"}>
-                            {cloGoal.status === "active" ? "Continue" : "Start"}
+                          <Button
+                            size="sm"
+                            variant={completedGoals.has(cloGoal.id) ? "outline" : "default"}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              markGoalComplete(cloGoal.id)
+                            }}
+                            className={completedGoals.has(cloGoal.id) ? "text-green-600 border-green-600" : ""}
+                          >
+                            <Check className="w-4 h-4 mr-1" />
+                            Done
                           </Button>
                           {expandedGoals.has(cloGoal.id) ? (
                             <ChevronUp className="w-5 h-5 text-muted-foreground" />

@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 
 const LandingPage = () => {
   const handleGetStarted = () => {
-    // Example navigation logic or modal trigger
     console.log("User clicked 'Get Started'");
   };
 

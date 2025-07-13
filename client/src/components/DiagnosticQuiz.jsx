@@ -7,7 +7,6 @@ import { Progress } from "./ui/progress"
 import { useNavigate } from "react-router-dom"
 import { cn } from "./lib/utils"
 
-// Import course outlines data
 const courseOutlines = [
   {
     name: "Computer Networks",
@@ -36,7 +35,7 @@ const courseOutlines = [
 
 export const DiagnosticQuiz = () => {
   const navigate = useNavigate()
-  // State management
+
   const [course, setCourse] = useState(null)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState(null)
@@ -45,8 +44,6 @@ export const DiagnosticQuiz = () => {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
   const [currentWeek, setCurrentWeek] = useState(1)
-
-  // Loading styles
   const loadingStyles = ``
 
   useEffect(() => {
@@ -54,7 +51,7 @@ export const DiagnosticQuiz = () => {
       try {
         setLoading(true)
         setError(null)
-        // Get selected course from localStorage (only once in useEffect)
+ 
         const selectedCourseName = JSON.parse(localStorage.getItem("selectedCourse"))
         if (!selectedCourseName) {
           setError("No course selected. Please select a course first.")
@@ -62,7 +59,7 @@ export const DiagnosticQuiz = () => {
           return
         }
 
-        // Find the selected course outline
+
         const selectedCourseOutline = courseOutlines.find((course) => course.name === selectedCourseName)
         if (!selectedCourseOutline) {
           setError(`Course "${selectedCourseName}" not found.`)
@@ -70,7 +67,6 @@ export const DiagnosticQuiz = () => {
           return
         }
 
-        // Find the current week's topics
         const weekData = selectedCourseOutline.weeks.find((w) => w.week === currentWeek)
         if (!weekData) {
           setError(`Week ${currentWeek} not found for ${selectedCourseName}`)
@@ -78,7 +74,6 @@ export const DiagnosticQuiz = () => {
           return
         }
 
-        // Create prompt for AI
         const prompt = `Create a diagnostic quiz for the course "${selectedCourseName}" focusing on Week ${currentWeek} topics: ${weekData.topics.join(", ")}.
 
 Generate exactly 5 multiple choice questions that assess student understanding of these topics. Each question should be mapped to one of the specific topics from this week.
@@ -112,7 +107,7 @@ Make sure:
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
           headers: {
-            Authorization: "Bearer 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",
+            Authorization: "Bearer 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",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://yourdomain.com",
             "X-Title": "OpenRouter Quiz Generator",
@@ -142,19 +137,16 @@ Make sure:
         const data = await response.json()
         const aiResponse = data.choices[0].message.content
 
-        // Parse the AI response
         let generatedCourse
         let cleanedResponse = aiResponse.trim()
 
-        // Remove markdown code blocks (```json and ```)
         cleanedResponse = cleanedResponse.replace(/^```json\s*/i, "")
         cleanedResponse = cleanedResponse.replace(/^```\s*/i, "")
         cleanedResponse = cleanedResponse.replace(/\s*```$/i, "")
 
-        // Remove any leading/trailing whitespace again
+
         cleanedResponse = cleanedResponse.trim()
 
-        // Try to find JSON content if there's still extra text
         const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/)
         if (jsonMatch) {
           cleanedResponse = jsonMatch[0]
@@ -168,7 +160,6 @@ Make sure:
           throw new Error("Invalid response format from AI")
         }
 
-        // Validate the generated course structure
         if (!generatedCourse.quiz || !Array.isArray(generatedCourse.quiz) || generatedCourse.quiz.length === 0) {
           throw new Error("Generated quiz is invalid or empty")
         }
@@ -183,9 +174,9 @@ Make sure:
     }
 
     generateQuiz()
-  }, [currentWeek]) // Only depend on currentWeek, not selectedCourseName
+  }, [currentWeek])
 
-  // Enhanced loading state with detailed progress
+
   if (loading) {
     return (
       <>
@@ -274,7 +265,6 @@ Make sure:
     )
   }
 
-  // Error state
   if (error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -299,7 +289,6 @@ Make sure:
     )
   }
 
-  // Quiz content
   if (!course || !course.quiz || course.quiz.length === 0) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -329,12 +318,10 @@ Make sure:
 
   const buildResults = () => {
     const topicScores = {}
-    // Initialize topic scores
     course.topics.forEach((topic) => {
       topicScores[topic] = { correct: 0, total: 0 }
     })
 
-    // Aggregate scores from answers
     course.quiz.forEach((q, i) => {
       const userAnswer = answers[i]
       const isCorrect = userAnswer === q.answer
@@ -346,7 +333,6 @@ Make sure:
       }
     })
 
-    // Build final performance results — ensure no duplicates
     const performanceByTopic = Object.keys(topicScores).map((topic) => {
       const data = topicScores[topic]
       const score = data.total > 0 ? ((data.correct / data.total) * 100).toFixed(0) : "0"

@@ -9,9 +9,9 @@ import App from './App.jsx'
 createRoot(document.getElementById('root')).render(
   <div>
     <Router>
-      {/* <App /> */}
-      {/* <TeacherDashboard />  */}
-      <StudentDashboard /> 
+      <App />
+      {/* <TeacherDashboard /> 
+      <StudentDashboard />  */}
     </Router>
   </div>,
 )

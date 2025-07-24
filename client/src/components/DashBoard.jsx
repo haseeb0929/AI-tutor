@@ -1,66 +1,50 @@
-import { Badge } from "./ui/badge"
-import { Button } from "./ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
-import { Progress } from "./ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
-import {
-  Brain,
-  BookOpen,
-  CheckCircle,
-  RotateCcw,
-  Target,
-  TrendingUp,
-  ExternalLink,
-  Play,
-  FileText,
-  Code,
-  ChevronDown,
-  ChevronUp,
-  Check,
-} from "lucide-react"
 import { useEffect, useState } from "react"
+import { Brain } from "lucide-react"
+import "./Dashboard.css"
+import {
+  TrendingUp,
+  Target,
+  CheckCircle,
+  BookOpen,
+  RotateCcw,
+  Check,
+  ChevronUp,
+  ChevronDown,
+  ExternalLink,
+} from "lucide-react"
 
 export const DashBoard = () => {
   const [dashboardData, setDashboardData] = useState(null)
-  const [expandedGoals, setExpandedGoals] = useState(new Set([0])) 
-  const [completedGoals, setCompletedGoals] = useState(new Set()) 
+  const [expandedGoals, setExpandedGoals] = useState(new Set([0]))
+  const [completedGoals, setCompletedGoals] = useState(new Set())
 
   useEffect(() => {
     const stored = localStorage.getItem("dashboardData")
     if (stored) {
       const parsedData = JSON.parse(stored)
-      // Extract the nested data structure
       setDashboardData(parsedData.data || parsedData)
     }
   }, [])
 
   const toggleGoalExpansion = (goalId) => {
     const newExpanded = new Set(expandedGoals)
-    if (newExpanded.has(goalId)) {
-      newExpanded.delete(goalId)
-    } else {
-      newExpanded.add(goalId)
-    }
+    newExpanded.has(goalId) ? newExpanded.delete(goalId) : newExpanded.add(goalId)
     setExpandedGoals(newExpanded)
   }
 
   const markGoalComplete = (goalId) => {
     const newCompleted = new Set(completedGoals)
-    if (newCompleted.has(goalId)) {
-      newCompleted.delete(goalId)
-    } else {
-      newCompleted.add(goalId)
-    }
+    newCompleted.has(goalId) ? newCompleted.delete(goalId) : newCompleted.add(goalId)
     setCompletedGoals(newCompleted)
   }
 
   if (!dashboardData) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Brain className="w-12 h-12 text-primary mx-auto mb-4 animate-pulse" />
-          <div className="text-lg font-medium">Loading your personalized dashboard...</div>
-          <div className="text-sm text-muted-foreground mt-2">Analyzing your learning progress</div>
+      <div className="dashboard-loading">
+        <div className="loading-box">
+          <Brain className="loading-icon" />
+          <div className="loading-text">Loading your personalized dashboard...</div>
+          <div className="loading-subtext">Analyzing your learning progress</div>
         </div>
       </div>
     )
@@ -68,7 +52,6 @@ export const DashBoard = () => {
 
   const { courseName, studentPerformance, learningPlan } = dashboardData
 
-  // Extract learning goals from the new structured format
   const extractGoals = (planArray) => {
     if (!Array.isArray(planArray)) return []
     return planArray.map((item, index) => ({
@@ -84,25 +67,21 @@ export const DashBoard = () => {
 
   const learningGoals = extractGoals(learningPlan)
 
-  // Categorize topics into strong and weak areas based on actual counts
   const categorizeTopics = (topics, strongCount, weakCount) => {
     if (!topics || topics.length === 0) return { strongTopics: [], weakTopics: [] }
 
-    // Shuffle topics to randomize selection
     const shuffledTopics = [...topics].sort(() => Math.random() - 0.5)
-
-    // Ensure we don't exceed available topics
     const maxStrongCount = Math.min(strongCount, topics.length)
     const maxWeakCount = Math.min(weakCount, topics.length - maxStrongCount)
 
     const strongTopics = shuffledTopics.slice(0, maxStrongCount).map((topic) => ({
       ...topic,
-      percentage: Math.floor(Math.random() * 20) + 75, // 75-95% for strong areas
+      percentage: Math.floor(Math.random() * 20) + 75,
     }))
 
     const weakTopics = shuffledTopics.slice(maxStrongCount, maxStrongCount + maxWeakCount).map((topic) => ({
       ...topic,
-      percentage: Math.floor(Math.random() * 30) + 40, // 40-70% for weak areas
+      percentage: Math.floor(Math.random() * 30) + 40,
     }))
 
     return { strongTopics, weakTopics }
@@ -115,328 +94,318 @@ export const DashBoard = () => {
   )
 
   const getResourceIcon = (type) => {
-    switch (type.toLowerCase()) {
-      case "youtube":
-        return <Play className="w-4 h-4" />
-      case "tutorial":
-        return <FileText className="w-4 h-4" />
-      case "documentation":
-        return <BookOpen className="w-4 h-4" />
-      case "exercise":
-        return <Code className="w-4 h-4" />
+    switch (type) {
+      case "video":
+        return (
+          <svg
+            stroke="currentColor"
+            fill="none"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            height="1em"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect x="2" y="7" width="20" height="10" rx="2" ry="2"></rect>
+            <polygon points="15 11 22 7 22 17 15 13 15 11"></polygon>
+          </svg>
+        )
+      case "article":
+        return (
+          <svg
+            stroke="currentColor"
+            fill="none"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            height="1em"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M4 2v20h16V2H4zM12 17H7v-2h5v2zm0-4H7v-2h5v2zm0-4H7V7h5v2z"></path>
+          </svg>
+        )
+      case "quiz":
+        return (
+          <svg
+            stroke="currentColor"
+            fill="none"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            height="1em"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+        )
       default:
-        return <ExternalLink className="w-4 h-4" />
-    }
-  }
-
-  const getResourceColor = (type) => {
-    switch (type.toLowerCase()) {
-      case "youtube":
-        return "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300"
-      case "tutorial":
-        return "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
-      case "documentation":
-        return "bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300"
-      case "exercise":
-        return "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300"
-      default:
-        return "bg-gray-100 text-gray-700 dark:bg-gray-950 dark:text-gray-300"
+        return (
+          <svg
+            stroke="currentColor"
+            fill="none"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            height="1em"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        )
     }
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Brain className="w-8 h-8 text-primary" />
+    <div className="dashboard">
+      <header className="dashboard-header">
+          <div className="header-content">
+            <div className="course-info">
+              <div className="course-icon">
+                <Brain />
               </div>
-              <div>
-                <h1 className="text-2xl font-bold">{courseName}</h1>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="default">Learning Dashboard</Badge>
-                  <Badge variant="outline">AI-Powered</Badge>
+              <div className="course-title">
+                <h1>{courseName}</h1>
+                <div className="badges">
+                  <span className="badge primary">Learning Dashboard</span>
+                  <span className="badge outline">AI-Powered</span>
                 </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-sm text-muted-foreground">Overall Score</div>
-              <div className="text-2xl font-bold text-primary">{studentPerformance.overallScore}%</div>
+            <div className="score-box">
+              <span className="score-label">Overall Score</span>
+              <div className="score-value">{studentPerformance.overallScore}%</div>
+            </div>
+          </div>
+      </header>
+
+      <main className="dashboard-main">
+        <div className="dashboard-content">
+          <div className="nav-tabs">
+            <button className="nav-tab active">Dashboard</button>
+            <button className="nav-tab">Knowledge Map</button>
+          </div>
+
+          <div className="stats-summary">
+            <div className="stat-card">
+              <div className="stat-header">
+                <h3>Overall Score</h3>
+                <TrendingUp />
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{studentPerformance.overallScore}%</div>
+                <p className="stat-description">Current performance</p>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-header">
+                <h3>Total Topics</h3>
+                <Target />
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{learningGoals.length}</div>
+                <p className="stat-description">Course topics</p>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-header">
+                <h3>Strong Areas</h3>
+                <CheckCircle />
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{studentPerformance.strongAreas}</div>
+                <p className="stat-description">Mastered concepts</p>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-header">
+                <h3>Weak Areas</h3>
+                <BookOpen />
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{studentPerformance.weakAreas}</div>
+                <p className="stat-description">Need improvement</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="goals-section">
+            <div className="goals-header">
+              <div className="goals-title">
+                <h2>
+                  <Target />
+                  Today's Goal Stack
+                </h2>
+                <button className="refresh-btn">
+                  <RotateCcw />
+                  Refresh
+                </button>
+              </div>
+              <p className="goals-description">Optimized learning path with resources and objectives</p>
+            </div>
+            <div className="goals-list">
+              {learningGoals.map((topicGoal, topicIndex) => (
+                <div key={topicGoal.id} className={`goal-card ${completedGoals.has(topicGoal.id) ? "completed" : ""}`}>
+                  <div className="goal-header" onClick={() => toggleGoalExpansion(topicGoal.id)}>
+                    <div className="goal-index">{completedGoals.has(topicGoal.id) ? <Check /> : topicIndex + 1}</div>
+                    <div className="goal-info">
+                      <h4>{topicGoal.topic}</h4>
+                      <div className="goal-meta">
+                        <span>{topicGoal.studyTimeline}</span>
+                        {completedGoals.has(topicGoal.id) && <span>Completed</span>}
+                      </div>
+                    </div>
+                    <div className="goal-actions">
+                      <button
+                        className="mark-done"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          markGoalComplete(topicGoal.id)
+                        }}
+                      >
+                        <Check />
+                        Done
+                      </button>
+                      {expandedGoals.has(topicGoal.id) ? (
+                        <ChevronUp className="expand-icon" />
+                      ) : (
+                        <ChevronDown className="expand-icon" />
+                      )}
+                    </div>
+                  </div>
+                  {expandedGoals.has(topicGoal.id) && (
+                    <div className="goal-details">
+                      <div className="goal-section">
+                        <h5>
+                          <Target />
+                          Learning Objectives
+                        </h5>
+                        <div className="objectives-list">
+                          {topicGoal.learningGoals.map((goal, goalIndex) => (
+                            <div key={goalIndex} className="objective-item">
+                              <CheckCircle />
+                              <span>{goal}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="goal-section">
+                        <h5>
+                          <BookOpen />
+                          Learning Resources ({topicGoal.resources.length})
+                        </h5>
+                        <div className="resources-list">
+                          {topicGoal.resources.map((resource, resourceIndex) => (
+                            <a
+                              key={resourceIndex}
+                              className="resource-item"
+                              href={resource.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <div className="resource-icon">{getResourceIcon(resource.type)}</div>
+                              <div className="resource-content">
+                                <h6>{resource.title}</h6>
+                                <div className="resource-meta">
+                                  <span>{resource.type}</span>
+                                  {resource.source && <span>{resource.source}</span>}
+                                </div>
+                              </div>
+                              <ExternalLink className="external-link" />
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="goal-section">
+                        <h5>
+                          <CheckCircle />
+                          Assessment Method
+                        </h5>
+                        <p className="assessment-text">{topicGoal.assessmentMethod}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
-      </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="knowledge">Knowledge Map</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="dashboard" className="space-y-6">
-            {/* Performance Overview Cards */}
-            <div className="grid gap-4 md:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Overall Score</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{studentPerformance.overallScore}%</div>
-                  <p className="text-xs text-muted-foreground">Current performance</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Topics</CardTitle>
-                  <Target className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{learningGoals.length}</div>
-                  <p className="text-xs text-muted-foreground">Course topics</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Strong Areas</CardTitle>
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">{studentPerformance.strongAreas}</div>
-                  <p className="text-xs text-muted-foreground">Mastered concepts</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Weak Areas</CardTitle>
-                  <BookOpen className="h-4 w-4 text-orange-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-orange-600">{studentPerformance.weakAreas}</div>
-                  <p className="text-xs text-muted-foreground">Need improvement</p>
-                </CardContent>
-              </Card>
+        <div className="knowledge-map" style={{ display: "none" }}>
+          <div className="knowledge-header">
+            <div className="knowledge-title">
+              <h2>
+                <Brain />
+                Knowledge Profile - {courseName}
+              </h2>
+              <p>Performance analysis across course topics</p>
             </div>
-
-            {/* Learning Goals Section */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Target className="w-5 h-5" />
-                    Today's Goal Stack
-                  </CardTitle>
-                  <Button variant="outline" size="sm">
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    Refresh
-                  </Button>
-                </div>
-                <CardDescription>Optimized learning path with resources and objectives</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {learningGoals.map((topicGoal, topicIndex) => (
-                    <div
-                      key={topicGoal.id}
-                      className={`border rounded-lg p-4 transition-colors ${
-                        completedGoals.has(topicGoal.id)
-                          ? "bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-800"
-                          : ""
-                      }`}
-                    >
-                      {/* Topic Header */}
-                      <div
-                        className="flex items-center justify-between cursor-pointer"
-                        onClick={() => toggleGoalExpansion(topicGoal.id)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
-                              completedGoals.has(topicGoal.id)
-                                ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                                : "bg-primary/10 text-primary"
-                            }`}
-                          >
-                            {completedGoals.has(topicGoal.id) ? <Check className="w-5 h-5" /> : topicIndex + 1}
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-lg">{topicGoal.topic}</h4>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="outline">{topicGoal.studyTimeline}</Badge>
-                              {completedGoals.has(topicGoal.id) && (
-                                <Badge variant="default" className="bg-green-600">
-                                  Completed
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
+            <div className="knowledge-content">
+              <div className="strong-section">
+                <h3>
+                  <CheckCircle />
+                  Strong Areas ({studentPerformance.strongAreas})
+                </h3>
+                <div className="topics-list">
+                  {strongTopics.length > 0 ? (
+                    strongTopics.map((topic, index) => (
+                      <div key={index} className="topic-item">
+                        <div className="topic-header">
+                          <h4>{topic.topic}</h4>
+                          <span>{topic.percentage}%</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            size="sm"
-                            variant={completedGoals.has(topicGoal.id) ? "outline" : "default"}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              markGoalComplete(topicGoal.id)
-                            }}
-                            className={completedGoals.has(topicGoal.id) ? "text-green-600 border-green-600" : ""}
-                          >
-                            <Check className="w-4 h-4 mr-1" />
-                            Done
-                          </Button>
-                          {expandedGoals.has(topicGoal.id) ? (
-                            <ChevronUp className="w-5 h-5 text-muted-foreground" />
-                          ) : (
-                            <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                          )}
+                        <div className="topic-progress">
+                          <div className="progress-fill" style={{ width: `${topic.percentage}%` }}></div>
+                        </div>
+                        <div className="topic-description">
+                          Strong understanding of {topic.topic.toLowerCase()} concepts
                         </div>
                       </div>
-
-                      {/* Expanded Content */}
-                      {expandedGoals.has(topicGoal.id) && (
-                        <div className="mt-4 space-y-4">
-                          {/* Learning Objectives */}
-                          <div>
-                            <h5 className="font-medium mb-3 flex items-center gap-2">
-                              <Target className="w-4 h-4" />
-                              Learning Objectives
-                            </h5>
-                            <div className="space-y-2">
-                              {topicGoal.learningGoals.map((goal, goalIndex) => (
-                                <div key={goalIndex} className="flex items-start gap-2 p-2 rounded-md bg-muted/30">
-                                  <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                  <span className="text-sm">{goal}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Learning Resources */}
-                          <div>
-                            <h5 className="font-medium mb-3 flex items-center gap-2">
-                              <BookOpen className="w-4 h-4" />
-                              Learning Resources ({topicGoal.resources.length})
-                            </h5>
-                            <div className="grid gap-3 md:grid-cols-2">
-                              {topicGoal.resources.map((resource, resourceIndex) => (
-                                <a
-                                  key={resourceIndex}
-                                  href={resource.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors group"
-                                >
-                                  <div className={`p-2 rounded-md ${getResourceColor(resource.type)}`}>
-                                    {getResourceIcon(resource.type)}
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <h6 className="font-medium text-sm group-hover:text-primary transition-colors">
-                                      {resource.title}
-                                    </h6>
-                                    <div className="flex items-center gap-2 mt-1">
-                                      <Badge variant="secondary" className="text-xs">
-                                        {resource.type}
-                                      </Badge>
-                                      {resource.source && (
-                                        <span className="text-xs text-muted-foreground">{resource.source}</span>
-                                      )}
-                                    </div>
-                                  </div>
-                                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                                </a>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Assessment Method */}
-                          <div className="p-3 bg-muted/50 rounded-lg">
-                            <h5 className="font-medium mb-2 flex items-center gap-2">
-                              <CheckCircle className="w-4 h-4" />
-                              Assessment Method
-                            </h5>
-                            <p className="text-sm text-muted-foreground">{topicGoal.assessmentMethod}</p>
-                          </div>
+                    ))
+                  ) : (
+                    <div className="no-data">No strong areas identified yet</div>
+                  )}
+                </div>
+              </div>
+              <div className="weak-section">
+                <h3>
+                  <BookOpen />
+                  Areas for Improvement ({studentPerformance.weakAreas})
+                </h3>
+                <div className="topics-list">
+                  {weakTopics.length > 0 ? (
+                    weakTopics.map((topic, index) => (
+                      <div key={index} className="topic-item">
+                        <div className="topic-header">
+                          <h4>{topic.topic}</h4>
+                          <span>{topic.percentage}%</span>
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        <div className="topic-progress">
+                          <div className="progress-fill" style={{ width: `${topic.percentage}%` }}></div>
+                        </div>
+                        <div className="topic-description">{topic.topic} needs more attention and practice</div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="no-data">No weak areas identified yet</div>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="knowledge">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Brain className="w-5 h-5" />
-                  Knowledge Profile - {courseName}
-                </CardTitle>
-                <CardDescription>Performance analysis across course topics</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-6 md:grid-cols-2">
-                  {/* Strong Areas */}
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-green-600 flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4" />
-                      Strong Areas ({studentPerformance.strongAreas})
-                    </h3>
-                    <div className="space-y-3">
-                      {strongTopics.length > 0 ? (
-                        strongTopics.map((topic, index) => (
-                          <div key={index} className="p-4 border rounded-lg bg-green-50 dark:bg-green-950/20">
-                            <div className="flex items-center justify-between mb-2">
-                              <h4 className="font-medium">{topic.topic}</h4>
-                              <Badge variant="default" className="bg-green-600">
-                                {topic.percentage}%
-                              </Badge>
-                            </div>
-                            <Progress value={topic.percentage} className="mb-2" />
-                            <div className="text-sm text-muted-foreground">
-                              Strong understanding of {topic.topic.toLowerCase()} concepts
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="p-4 text-center text-muted-foreground">No strong areas identified yet</div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Weak Areas */}
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-orange-600 flex items-center gap-2">
-                      <BookOpen className="w-4 h-4" />
-                      Areas for Improvement ({studentPerformance.weakAreas})
-                    </h3>
-                    <div className="space-y-3">
-                      {weakTopics.length > 0 ? (
-                        weakTopics.map((topic, index) => (
-                          <div key={index} className="p-4 border rounded-lg bg-orange-50 dark:bg-orange-950/20">
-                            <div className="flex items-center justify-between mb-2">
-                              <h4 className="font-medium">{topic.topic}</h4>
-                              <Badge variant="destructive">{topic.percentage}%</Badge>
-                            </div>
-                            <Progress value={topic.percentage} className="mb-2" />
-                            <div className="text-sm text-muted-foreground">
-                              {topic.topic} needs more attention and practice
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="p-4 text-center text-muted-foreground">No weak areas identified yet</div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   )

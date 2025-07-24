@@ -1,0 +1,315 @@
+/* Base font scale */
+html {
+  font-size: 16px;
+  /* Default (1rem = 16px) */
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  background: linear-gradient(135deg, #e9f5e0 0%, #d1e7d5 100%);
+  margin: 0;
+  padding: 0;
+  color: #2f3e24;
+}
+
+
+/* Layout */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-right: 1px solid #d1e7d5;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: left 0.3s ease;
+}
+
+.sidebar h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar li {
+  margin-bottom: 0.75rem;
+}
+
+.sidebar a {
+  display: block;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: #4b5563;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.sidebar a:hover {
+  background-color: #d1e7d5;
+  color: #2f3e24;
+  transform: translateX(4px);
+}
+
+.sidebar a.active {
+  background-color: #c8e6c9;
+  color: #2f3e24;
+  font-weight: 600;
+}
+
+.hamburger {
+  display: none;
+  font-size: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  width: 30px;
+  height: 24px;
+  padding: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+
+/* Hamburger lines */
+.hamburger::before,
+.hamburger::after,
+.hamburger span {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 3px;
+  background-color: green;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebar.active+.main-content .hamburger::before {
+  transform: translateY(10.5px) rotate(45deg);
+}
+
+.sidebar.active+.main-content .hamburger::after {
+  transform: translateY(-10.5px) rotate(-45deg);
+}
+
+.sidebar.active+.main-content .hamburger span {
+  opacity: 0;
+}
+
+.hamburger::before {
+  transform-origin: top left;
+}
+
+.hamburger::after {
+  transform-origin: bottom left;
+}
+
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  background-color: #ffffff;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.teacher-info span {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.logout-btn {
+  background: linear-gradient(to right, #e53935, #b71c1c);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 8px rgba(229, 57, 53, 0.15);
+}
+.logout-btn:hover {
+  background: linear-gradient(to right, #ff1744, #d50000);
+  box-shadow: 0 4px 16px rgba(229, 57, 53, 0.25);
+  transform: scale(1.05);
+}
+
+.dashboard-body {
+  background-color: #fff;
+  padding: 1.5rem;
+  border: 1px solid #d1e7d5;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-body h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.dashboard-body p {
+  font-size: 1rem;
+  color: #4b5563;
+}
+
+.menu-padded {
+  padding-left: 15px; 
+}
+
+@media (max-width: 1024px) {
+  html {
+    font-size: 15px;
+  }
+
+  .sidebar {
+    width: 200px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .logout-btn {
+    font-size: 0.95rem;
+  }
+
+  .dashboard-body h2 {
+    font-size: 1.35rem;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+  .hamburger-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: padding-left 0.3s ease;
+    color: green;
+  }
+
+  .dashboard-container {
+    flex-direction: column;
+  }
+
+  @media (max-width: 768px) {
+    .hamburger {
+      display: flex;
+      top: 1rem;
+      right: 1.5rem;
+    }
+  }
+
+
+  .sidebar {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    height: 100%;
+    z-index: 999;
+    transition: left 0.3s ease;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .hamburger {
+    display: flex;
+    top: 1rem;
+    right: 1.5rem;
+  }
+
+
+
+  .main-content {
+    padding: 1rem;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .teacher-info span {
+    font-size: 0.95rem;
+  }
+
+  .logout-btn {
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  html {
+    font-size: 13.5px;
+  }
+
+  .sidebar h2 {
+    font-size: 1.25rem;
+  }
+
+  .sidebar a {
+    font-size: 0.95rem;
+  }
+
+  .dashboard-body h2 {
+    font-size: 1.25rem;
+  }
+
+  .dashboard-body p {
+    font-size: 0.95rem;
+  }
+
+  .logout-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

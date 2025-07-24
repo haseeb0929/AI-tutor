@@ -1,0 +1,254 @@
+/* Styling the submissions section */
+.submissions-section {
+    background-color: #fff;
+    padding: 1.5rem;
+    border: 1px solid #d1e7d5;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.submissions-section h2 {
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #2f3e24;
+}
+
+/* Styling the submissions table */
+.submissions-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #f9fdf7;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.submissions-table th,
+.submissions-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.95rem;
+    color: #2f3e24;
+}
+
+.submissions-table th {
+    background-color: #c8e6c9;
+    font-weight: 600;
+    color: #2f3e24;
+}
+
+.submissions-table tr {
+    border-bottom: 1px solid #d1e7d5;
+}
+
+.submissions-table tr:last-child {
+    border-bottom: none;
+}
+
+.submissions-table tr:hover {
+    background-color: #e8f5e9;
+}
+
+/* View details button */
+.view-details-btn {
+    background: linear-gradient(to right, #66bb6a, #43a047);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.3s, box-shadow 0.3s, transform 0.2s;
+    box-shadow: 0 2px 8px rgba(102, 187, 106, 0.2);
+}
+
+.view-details-btn:hover {
+    background: linear-gradient(to right, #81c784, #388e3c);
+    box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
+    transform: scale(1.02);
+}
+
+/* Submission details modal */
+.submission-details-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #2f3e24;
+}
+
+.modal-content p {
+    font-size: 0.95rem;
+    color: #4b5563;
+    margin-bottom: 0.5rem;
+}
+
+.modal-content h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+    color: #2f3e24;
+}
+
+/* Answers list */
+.answers-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.answers-list li {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+}
+
+.answers-list li.correct {
+    background-color: #e8f5e9;
+    border: 1px solid #a5d6a7;
+}
+
+.answers-list li.incorrect {
+    background-color: #ffebee;
+    border: 1px solid #ef9a9a;
+}
+
+.answers-list p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+/* Close modal button */
+.close-modal-btn {
+    background: linear-gradient(to right, #e53935, #b71c1c);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.3s, box-shadow 0.3s, transform 0.2s;
+    box-shadow: 0 2px 8px rgba(229, 57, 53, 0.15);
+    margin-top: 1rem;
+}
+
+.close-modal-btn:hover {
+    background: linear-gradient(to right, #ff1744, #d50000);
+    box-shadow: 0 4px 16px rgba(229, 57, 53, 0.25);
+    transform: scale(1.02);
+}
+
+/* Loading and error states */
+.loading,
+.error {
+    font-size: 1rem;
+    color: #4b5563;
+    text-align: center;
+    padding: 1rem;
+}
+
+.error {
+    color: #b71c1c;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+
+    .submissions-table th,
+    .submissions-table td {
+        font-size: 0.9rem;
+        padding: 0.6rem;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .submissions-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .submissions-table th,
+    .submissions-table td {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+    }
+
+    .modal-content {
+        max-height: 70vh;
+    }
+
+    .modal-content h3 {
+        font-size: 1.1rem;
+    }
+
+    .modal-content p {
+        font-size: 0.9rem;
+    }
+
+    .view-details-btn,
+    .close-modal-btn {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .submissions-section h2 {
+        font-size: 1.25rem;
+    }
+
+    .submissions-table th,
+    .submissions-table td {
+        font-size: 0.8rem;
+        padding: 0.4rem;
+    }
+
+    .modal-content {
+        width: 100%;
+        padding: 0.75rem;
+    }
+
+    .modal-content h3 {
+        font-size: 1rem;
+    }
+
+    .modal-content p {
+        font-size: 0.85rem;
+    }
+
+    .view-details-btn,
+    .close-modal-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

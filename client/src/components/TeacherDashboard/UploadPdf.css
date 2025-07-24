@@ -1,0 +1,92 @@
+/* UploadPdf.css */
+
+.upload-form {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.upload-input {
+  font-size: 1rem;
+  padding: 0.5rem;
+  border: 1px solid #d1e7d5;
+  border-radius: 6px;
+  background-color: #f9fdf7;
+  color: #2f3e24;
+  transition: border-color 0.3s ease;
+}
+
+.upload-input:hover,
+.upload-input:focus {
+  border-color: #a5d6a7;
+  outline: none;
+}
+
+.selected-file {
+  color: #4b5563;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.upload-message {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: green;
+  margin-top: 1rem;
+}
+
+.hidden-file-input {
+  display: none;
+}
+.custom-upload-box {
+  border: 2px dashed #a5d6a7;
+  padding: 2rem;
+  text-align: center;
+  border-radius: 10px;
+  background-color: #f0fdf4;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.custom-upload-box:hover {
+  background-color: #e0f7e9;
+  border-color: #66bb6a;
+  transform: scale(1.02);
+}
+
+.upload-plus {
+  font-size: 2.5rem;
+  color: #388e3c;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.upload-text {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.upload-button {
+  background: linear-gradient(to right, #fbc02d, #f9a825);
+  color: #333;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s, box-shadow 0.3s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(251, 192, 45, 0.15);
+}
+
+.upload-button:hover {
+  background: linear-gradient(to right, #ffd600, #ffb300);
+  box-shadow: 0 4px 16px rgba(251, 192, 45, 0.25);
+  transform: scale(1.02);
+}

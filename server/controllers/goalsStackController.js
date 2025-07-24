@@ -58,7 +58,7 @@ Return only the JSON array, nothing else.`;
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: "Bearer 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",
+        Authorization: "Bearer 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",
         "Content-Type": "application/json",
         "HTTP-Referer": "https://yourdomain.com",
         "X-Title": "OpenRouter Text Test",

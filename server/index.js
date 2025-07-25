@@ -6,6 +6,9 @@ const goalsRoutes = require('./routes/getGoalsStackRoute');
 const TeacherDashboardRoutes = require('./routes/Teacher/Routes');
 const StudentDashboardRoutes = require('./routes/Student/Routes');
 const connectDB = require('./config/db.connection');
+const verifyToken = require("./middleware/auth.middleware");
+const authRoutes = require('./routes/auth');
+
 
 dotenv.config();
 connectDB();
@@ -18,11 +21,13 @@ app.use(cors());
 app.use(express.json());
 
 
-app.use('/getGoals', goalsRoutes);
+app.use('/getGoals', verifyToken, goalsRoutes);
 
-app.use('/TeacherDashboard', TeacherDashboardRoutes);
-app.use('/StudentDashboard', StudentDashboardRoutes);
+app.use('/TeacherDashboard', verifyToken, TeacherDashboardRoutes);
+app.use('/StudentDashboard', verifyToken, StudentDashboardRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use('/auth', authRoutes);
 
 app.get('/', (req, res) => {
   res.send('✅ AI Tutor Backend is running...');

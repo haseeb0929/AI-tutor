@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../../api"
 import "./UploadPdf.css";
 
 
@@ -26,16 +27,12 @@ export const UploadPdf = () => {
         }
 
         const formData = new FormData();
-        formData.append("file", pdfFile); // "file" is the key backend should expect
+        formData.append("file", pdfFile); // backend should expect 'file'
 
         try {
-            const response = await fetch("http://localhost:3000/TeacherDashboard/uploadFile", {
-                method: "POST",
-                body: formData,
-            });
+            const response = await api.post("/TeacherDashboard/uploadFile", formData);
 
-            if (response.ok) {
-                const result = await response.json(); 
+            if (response.status === 200) {
                 setMessage(`"${pdfFile.name}" uploaded successfully.`);
             } else {
                 setMessage("Upload failed. Please try again.");
@@ -47,6 +44,7 @@ export const UploadPdf = () => {
 
         setPdfFile(null);
     };
+
 
 
     return (

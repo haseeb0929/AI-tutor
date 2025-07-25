@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Brain } from "lucide-react"
-import "./Dashboard.css"
+import "./Dashboard.module.css"
 import {
   TrendingUp,
   Target,

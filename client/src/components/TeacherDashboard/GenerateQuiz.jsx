@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../../api";
 import "./GenerateQuiz.css";
 
 export const GenerateQuiz = () => {
@@ -10,10 +11,10 @@ export const GenerateQuiz = () => {
     const [loading, setLoading] = useState(false); // For loader state
 
     useEffect(() => {
-        fetch("http://localhost:3000/TeacherDashboard/pdf/list")
-            .then((res) => res.json())
-            .then((data) => setPdfFiles(data.files || []))
+        api.get("/TeacherDashboard/pdf/list")
+            .then((res) => setPdfFiles(res.data.files || []))
             .catch((err) => console.error("Error fetching PDFs:", err));
+
     }, []);
 
     const handleSubmit = async (e) => {
@@ -23,8 +24,8 @@ export const GenerateQuiz = () => {
             return setMessage("Please select a PDF first.");
         }
 
-        setLoading(true); 
-        setMessage(""); 
+        setLoading(true);
+        setMessage("");
 
         const payload = {
             fileId: selectedPdf,
@@ -33,23 +34,16 @@ export const GenerateQuiz = () => {
         };
 
         try {
-            const res = await fetch("http://localhost:3000/TeacherDashboard/generate-quizzes", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            });
-
-            const result = await res.json();
-            setMessage(result.message || "Quiz generation request sent.");
+            const res = await api.post("/TeacherDashboard/generate-quizzes", payload);
+            setMessage(res.data.message || "Quiz generation request sent.");
         } catch (error) {
             console.error("Error:", error);
             setMessage("Failed to generate quizzes.");
         } finally {
-            setLoading(false); // Stop loader
+            setLoading(false);
         }
     };
+
 
     const handlePdfSelect = (id) => {
         setSelectedPdf(id);

@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react"
 import { Target, Loader2 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import "./DiagnosticQuiz.css"
+import { generateDiagnosticQuiz } from "../services/AiQuizGenerateService";
+import { submitQuizResults } from "../services/AiQuizSubmitService";
+import "./DiagnosticQuiz.module.css"
 
 const courseOutlines = [
-   {
+  {
     name: "Computer Networks",
     weeks: [
       {
@@ -41,86 +43,37 @@ export const DiagnosticQuiz = () => {
   const [currentWeek, setCurrentWeek] = useState(1);
 
   useEffect(() => {
-    const generateQuiz = async () => {
+    const fetchQuiz = async () => {
       setLoading(true);
-      const selectedCourseName = JSON.parse(localStorage.getItem("selectedCourse"));
-      if (!selectedCourseName) {
-        setError("No course selected.");
-        setLoading(false);
-        return;
-      }
-
-      const selectedCourseOutline = courseOutlines.find((c) => c.name === selectedCourseName);
-      const weekData = selectedCourseOutline?.weeks.find((w) => w.week === currentWeek);
-
-      if (!selectedCourseOutline || !weekData) {
-        setError("Invalid course or week data.");
-        setLoading(false);
-        return;
-      }
-
-      const prompt = `Create a diagnostic quiz for the course "${selectedCourseName}" focusing on Week ${currentWeek} topics: ${weekData.topics.join(", ")}.
-
-Generate exactly 5 multiple choice questions that assess student understanding of these topics. Each question should be mapped to one of the specific topics from this week.
-
-Topics for this week:
-${weekData.topics.map((topic, index) => `${index + 1}. ${topic}`).join("\n")}
-
-Return the response in this exact JSON format:
-{
-  "name": "${selectedCourseName}",
-  "week": ${currentWeek},
-  "topics": ${JSON.stringify(weekData.topics)},
-  "quiz": [
-    {
-      "question": "Question text here",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
-      "answer": 0,
-      "topic": "Introduction to Computer Networks"
-    }
-  ]
-}`;
-
       try {
-        const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer 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",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "https://yourdomain.com",
-            "X-Title": "OpenRouter Quiz Generator",
-          },
-          body: JSON.stringify({
-            model: "google/gemma-3-12b-it:free",
-            messages: [
-              {
-                role: "system",
-                content: "You are an expert educational advisor who ...",
-              },
-              {
-                role: "user",
-                content: prompt,
-              },
-            ],
-            max_tokens: 2000,
-            temperature: 0.7,
-          }),
-        });
+        const selectedCourseName = JSON.parse(localStorage.getItem("selectedCourse"));
+        if (!selectedCourseName) {
+          setError("No course selected.");
+          setLoading(false);
+          return;
+        }
 
-        const data = await res.json();
-        const aiContent = data.choices[0].message.content;
-        const cleaned = aiContent.replace(/```json|```/g, "").trim();
-        const parsed = JSON.parse(cleaned.match(/\{[\s\S]*\}/)[0]);
-        setCourse(parsed);
-        setLoading(false);
+        const selectedCourseOutline = courseOutlines.find((c) => c.name === selectedCourseName);
+        const weekData = selectedCourseOutline?.weeks.find((w) => w.week === currentWeek);
+
+        if (!selectedCourseOutline || !weekData) {
+          setError("Invalid course or week data.");
+          setLoading(false);
+          return;
+        }
+
+        const quiz = await generateDiagnosticQuiz(selectedCourseName, currentWeek, weekData);
+        setCourse(quiz);
       } catch (err) {
         setError("Error generating quiz.");
+      } finally {
         setLoading(false);
       }
     };
 
-    generateQuiz();
+    fetchQuiz();
   }, [currentWeek]);
+
 
   const handleAnswer = (index) => {
     const newAnswers = [...answers];
@@ -155,24 +108,18 @@ Return the response in this exact JSON format:
   const handleSubmit = async () => {
     setSubmitting(true);
     const topicResults = buildResults();
+
     try {
-      const res = await fetch("http://localhost:3000/getGoals", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          courseName: course.name,
-          week: course.week,
-          topicResults,
-        }),
+      const result = await submitQuizResults({
+        courseName: course.name,
+        week: course.week,
+        topicResults,
       });
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem("dashboardData", JSON.stringify(data.data));
-        navigate("/Dashboard");
-      } else {
-        throw new Error();
-      }
-    } catch {
+
+      localStorage.setItem("dashboardData", JSON.stringify(result));
+      navigate("/Dashboard");
+    } catch (err) {
+      setError("Failed to submit quiz results.");
       setSubmitting(false);
     }
   };
@@ -220,7 +167,7 @@ Return the response in this exact JSON format:
     <div className="page">
       <header className="page-header">
         <div className="header-content">
-         
+
           <div>
             <h1 className="title">{course.name}</h1>
             <div className="badges">

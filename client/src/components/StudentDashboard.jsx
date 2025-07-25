@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./StudentDashboard.css";
+import "./StudentDashboard.module.css";
+import api from "../api";
 
 export const StudentDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -17,10 +18,9 @@ export const StudentDashboard = () => {
   useEffect(() => {
     const fetchAssignedQuizzes = async () => {
       try {
-        const response = await fetch("http://localhost:3000/StudentDashboard/getAssignedQuizes");
-        if (!response.ok) throw new Error("Failed to fetch quizzes");
-        const data = await response.json();
-        setQuizzes(Array.isArray(data.quizzes) ? data.quizzes : []);
+        const response = await api.get("/StudentDashboard/getAssignedQuizes");
+        setQuizzes(Array.isArray(response.data.quizzes) ? response.data.quizzes : []);
+
       } catch (error) {
         console.error("Failed to fetch assigned quizzes:", error);
       } finally {
@@ -93,17 +93,14 @@ export const StudentDashboard = () => {
 
       const score = answers.filter((a) => a.isCorrect).length;
 
-      const response = await fetch("http://localhost:3000/StudentDashboard/submitQuiz", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studentId: "fake_student",
-          quizId: activeQuiz._id,
-          answers,
-          score,
-          duration: 15 * 60 - timeLeft,
-        }),
+      const response = await api.post("/StudentDashboard/submitQuiz", {
+        studentId: "fake_student",
+        quizId: activeQuiz._id,
+        answers,
+        score,
+        duration: 15 * 60 - timeLeft,
       });
+
 
       if (!response.ok) throw new Error("Failed to submit quiz");
       setSubmissionStatus("success");
@@ -121,17 +118,14 @@ export const StudentDashboard = () => {
 
     setSubmissionStatus("submitting");
     try {
-      await fetch("http://localhost:3000/StudentDashboard/submitQuiz", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          quizId: activeQuiz._id,
-          studentId: "fake_student",
-          answers: [],
-          score: 0,
-          duration: 15 * 60,
-        }),
+      await api.post("/StudentDashboard/submitQuiz", {
+        quizId: activeQuiz._id,
+        studentId: "fake_student",
+        answers: [],
+        score: 0,
+        duration: 15 * 60,
       });
+
 
       setAttemptedQuizIds((prev) => [...prev, activeQuiz._id]);
       setActiveQuiz(null);
@@ -187,7 +181,7 @@ export const StudentDashboard = () => {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="teacher-dashboard-container">
       <aside className={`sidebar ${isSidebarOpen ? "active" : ""}`}>
         <h2>Student Panel</h2>
         <nav>
@@ -204,8 +198,8 @@ export const StudentDashboard = () => {
         </nav>
       </aside>
 
-      <main className="main-content">
-        <header className="dashboard-header">
+      <div className="teacher-main-content">
+        <header className="teacher-dashboard-header">
           <button className="hamburger" onClick={toggleSidebar} disabled={activeQuiz}>
             <div className={`hamburger-text${isSidebarOpen ? " menu-padded" : ""}`} ref={menuText}>
               Menu
@@ -274,7 +268,7 @@ export const StudentDashboard = () => {
             </div>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 };

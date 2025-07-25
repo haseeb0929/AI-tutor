@@ -1,6 +1,6 @@
 import { Brain, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
-import "./CourseSelection.css"; // Make sure to import your CSS
+import "./CourseSelection.module.css"; // Make sure to import your CSS
 
 export const CourseSelection = () => {
     const courses = [

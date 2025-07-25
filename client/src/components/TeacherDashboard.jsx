@@ -2,7 +2,7 @@ import { UploadPdf } from "./TeacherDashboard/UploadPdf";
 import { GenerateQuiz } from "./TeacherDashboard/GenerateQuiz";
 import { AssignQuiz } from "./TeacherDashboard/AssignQuiz";
 import { CheckSubmissions } from "./TeacherDashboard/CheckSubmissions";
-import "./TeacherDashboard.css";
+import styles from "./TeacherDashboard.module.css";
 import React, { useState, useRef } from "react";
 
 export const TeacherDashboard = () => {
@@ -24,48 +24,67 @@ export const TeacherDashboard = () => {
         return <AssignQuiz />;
       case "check-submissions":
         return <CheckSubmissions />;
-      // ... other cases
       default:
         return (
-          <section className="dashboard-body">
+          <section className={styles["dashboard-body"]}>
             <h2>Your Actions</h2>
-            <p>Use the sidebar to upload PDFs, generate quizzes, assign deadlines, and monitor student progress.</p>
+            <p>
+              Use the sidebar to upload PDFs, generate quizzes, assign deadlines, and monitor student progress.
+            </p>
           </section>
         );
     }
   };
 
   return (
-    <div className="dashboard-container">
-      <aside className={`sidebar ${isSidebarOpen ? "active" : ""}`}>
+    <div className={styles["teacher-dashboard-container"]}>
+      <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.active : ""}`}>
         <h2>Teacher Panel</h2>
         <nav>
           <ul>
-            <li><a href="#" onClick={() => setCurrentPage("upload-pdf")}>Upload PDF</a></li>
-            <li><a href="#" onClick={() => setCurrentPage("generate-quizzes")}>Generate Quizzes</a></li>
-            <li><a href="#" onClick={() => setCurrentPage("assign-quiz")}>Assign Quiz</a></li>
-            <li><a href="#" onClick={() => setCurrentPage("check-submissions")}>Check Submissions</a></li>
-            {/* <li><a href="#">Student Reports</a></li> */}
+            <li>
+              <a href="#" onClick={() => setCurrentPage("upload-pdf")}>
+                Upload PDF
+              </a>
+            </li>
+            <li>
+              <a href="#" onClick={() => setCurrentPage("generate-quizzes")}>
+                Generate Quizzes
+              </a>
+            </li>
+            <li>
+              <a href="#" onClick={() => setCurrentPage("assign-quiz")}>
+                Assign Quiz
+              </a>
+            </li>
+            <li>
+              <a href="#" onClick={() => setCurrentPage("check-submissions")}>
+                Check Submissions
+              </a>
+            </li>
           </ul>
         </nav>
       </aside>
 
-      <main className="main-content">
-        <header className="dashboard-header">
-          <button className="hamburger" onClick={toggleSidebar}>
-            <div className={`hamburger-text${isSidebarOpen ? " menu-padded" : ""}`} ref={menuText}>
+      <div className={styles["teacher-main-content"]}>
+        <header className={styles["teacher-dashboard-header"]}>
+          <button className={styles["hamburger"]} onClick={toggleSidebar}>
+            <div
+              className={`${styles["hamburger-text"]} ${isSidebarOpen ? styles["menu-padded"] : ""}`}
+              ref={menuText}
+            >
               Menu
             </div>
           </button>
           <h1>Dashboard</h1>
-          <div className="teacher-info">
+          <div className={styles["teacher-info"]}>
             <span style={{ paddingRight: "10px" }}>Welcome, Teacher</span>
-            <button className="logout-btn">Logout</button>
+            <button className={styles["logout-btn"]}>Logout</button>
           </div>
         </header>
 
         {renderContent()}
-      </main>
+      </div>
     </div>
   );
 };

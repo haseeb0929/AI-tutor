@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import api from "../../api"
 import "./AssignQuiz.css";
 
 class ErrorBoundary extends React.Component {
@@ -28,13 +29,11 @@ export const AssignQuiz = () => {
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const response = await fetch("http://localhost:3000/TeacherDashboard/quizzes");
-        const data = await response.json();
-        console.log("Fetched Quizzes:", data);
-        setQuizzes(data);
-        setLoading(false);
+        const response = await api.get("/TeacherDashboard/quizzes");
+        setQuizzes(response.data);
       } catch (error) {
         console.error("Error fetching quizzes:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -44,19 +43,12 @@ export const AssignQuiz = () => {
 
   const assignQuiz = async (quizId) => {
     try {
-      const response = await fetch(`http://localhost:3000/TeacherDashboard/assignQuiz/${quizId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isAssigned: true }),
-      });
-
-      if (response.ok) {
-        setQuizzes((prev) =>
-          prev.map((quiz) =>
-            quiz._id === quizId ? { ...quiz, isAssigned: true } : quiz
-          )
-        );
-      }
+      await api.put(`/TeacherDashboard/assignQuiz/${quizId}`, { isAssigned: true });
+      setQuizzes((prev) =>
+        prev.map((quiz) =>
+          quiz._id === quizId ? { ...quiz, isAssigned: true } : quiz
+        )
+      );
     } catch (error) {
       console.error("Error assigning quiz:", error);
     }

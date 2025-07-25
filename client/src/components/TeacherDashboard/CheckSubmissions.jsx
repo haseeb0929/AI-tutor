@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../api";
 import "./CheckSubmissions.css";
 
 export const CheckSubmissions = () => {
@@ -8,22 +8,25 @@ export const CheckSubmissions = () => {
   const [error, setError] = useState(null);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
 
+
+
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:3000/TeacherDashboard/getQuizSubmissions");
+        const response = await api.get("/TeacherDashboard/getQuizSubmissions");
         const data = response.data;
         setSubmissions(Array.isArray(data.quizResults) ? data.quizResults : []);
-        setLoading(false);
       } catch (err) {
         setError("Failed to fetch submissions");
+      } finally {
         setLoading(false);
       }
     };
 
     fetchSubmissions();
   }, []);
+
 
   const handleViewDetails = (submission) => {
     setSelectedSubmission(submission);
